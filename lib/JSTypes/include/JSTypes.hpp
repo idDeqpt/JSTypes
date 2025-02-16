@@ -1,0 +1,6 @@
+#ifndef JS_TYPES_LIBRARY
+#define JS_TYPES_LIBRARY
+
+
+
+#endif //JS_TYPES_LIBRARY
