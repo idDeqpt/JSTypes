@@ -9,6 +9,7 @@ namespace jst
 	class JSBaseType
 	{
 	public:
+		bool undefined;
 		virtual std::string toString();
 	};
 }
