@@ -1,6 +1,7 @@
 #ifndef JS_TYPES_LIBRARY
 #define JS_TYPES_LIBRARY
 
-#include "JSObject.hpp"
+#include "JSNumber.hpp"
+#include "JSString.hpp"
 
 #endif //JS_TYPES_LIBRARY

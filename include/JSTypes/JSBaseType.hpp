@@ -10,7 +10,7 @@ namespace jst
 	{
 	public:
 		bool undefined;
-		virtual std::string toString();
+		virtual std::string toString() = NULL;
 	};
 }
 

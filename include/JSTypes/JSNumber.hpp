@@ -12,6 +12,11 @@ namespace jst
 		JSNumber();
 		JSNumber(float value);
 
+		std::string toString() override;
+
+		void operator=(float new_value);
+		operator float() const;
+
 	protected:
 		float value;
 	};
