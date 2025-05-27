@@ -15,6 +15,7 @@ namespace jst
 		JSString(std::string value);
 
 		std::string toString() override;
+		void destroy() override {}
 
 		void operator=(std::string new_value);
 

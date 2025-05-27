@@ -13,6 +13,7 @@ namespace jst
 		JSBoolean(bool value);
 
 		std::string toString() override;
+		void destroy() override {}
 
 		void operator=(bool new_value);
 		operator bool() const;

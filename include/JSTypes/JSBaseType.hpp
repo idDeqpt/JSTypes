@@ -9,8 +9,10 @@ namespace jst
 	class JSBaseType
 	{
 	public:
+		JSBaseType() {undefined = true;}
 		bool undefined;
-		virtual std::string toString() = NULL;
+		virtual std::string toString() {return "JSBaseType";};
+		virtual void destroy() {};
 	};
 }
 

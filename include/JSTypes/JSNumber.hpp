@@ -2,6 +2,7 @@
 #define JS_NUMBER_TYPE_HPP
 
 #include "JSBaseType.hpp"
+#include <iostream>
 
 
 namespace jst
@@ -13,6 +14,7 @@ namespace jst
 		JSNumber(float value);
 
 		std::string toString() override;
+		void destroy() override {}
 
 		void operator=(float new_value);
 		operator float() const;

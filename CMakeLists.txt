@@ -5,7 +5,11 @@ set(PROJECT_NAME jstypes)
 project(${PROJECT_NAME} CXX)
 include_directories("./include")
 
-set(SOURCE_LIB src/JSNumber.cpp src/JSString.cpp)       
+set(SOURCE_LIB 
+	src/JSBoolean.cpp
+	src/JSNumber.cpp 
+	src/JSString.cpp 
+	src/JSObject.cpp)       
 
 # Включение экспорта всех символов для создания динамической библиотеки
 set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
