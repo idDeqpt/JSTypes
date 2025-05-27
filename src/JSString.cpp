@@ -23,7 +23,7 @@ jst::JSString::JSString(std::string value)
 
 std::string jst::JSString::toString()
 {
-	return (undefined) ? "undefined" : value;
+	return (undefined) ? "undefined" : ("\"" + value + "\"");
 }
 
 

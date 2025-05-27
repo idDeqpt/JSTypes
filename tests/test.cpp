@@ -39,23 +39,50 @@ int main()
 	std::cout << obj.toString() << std::endl;
 
 	jst::JSObject obj1;
-	obj1.addField("key1");
-	obj1["key1"] = new jst::JSBaseType();
-	obj1.addField("key2");
-	obj1["key2"] = new jst::JSBoolean(true);
-	obj1.addField("key3");
-	obj1["key3"] = new jst::JSNumber(34);
-	obj1.addField("key4");
-	obj1["key4"] = new jst::JSString("abbebe");
+	obj1.addField("key1", std::make_shared<jst::JSBaseType>());
+	obj1.addField("key2", std::make_shared<jst::JSBoolean>(true));
+	obj1.addField("key3", std::make_shared<jst::JSNumber>(34));
+	obj1.addField("key4", std::make_shared<jst::JSString>("abbebe"));
+	obj1.addField("key5", std::make_shared<jst::JSNumber>());
 	std::cout << obj1.toString() << std::endl;
 
 	jst::JSObject obj2;
-	obj2.addField("key2");
-	obj2["key2"] = new jst::JSNumber(304);
-	obj2.addField("key3");
-	obj2["key3"] = new jst::JSNumber(34);
+	obj2.addField("key2", std::make_shared<jst::JSNumber>(304));
+	obj2.addField("key3", std::make_shared<jst::JSNumber>(34));
 	obj2.removeField("key3");
 	std::cout << obj2.toString() << std::endl;
+
+	jst::JSObject obj3;
+	obj3.addField("key1", std::make_shared<jst::JSObject>(obj1));
+	obj3.addField("key2", std::make_shared<jst::JSObject>(obj3));
+	std::cout << obj3.toString() << std::endl << std::endl;
+
+
+	jst::JSArray arr;
+	std::cout << arr.toString() << std::endl;
+
+	jst::JSArray arr1;
+	arr1.pushBack(std::make_shared<jst::JSBaseType>());
+	arr1.pushBack(std::make_shared<jst::JSNumber>());
+	arr1.pushBack(std::make_shared<jst::JSNumber>(45));
+	arr1.pushBack(std::make_shared<jst::JSObject>(obj1));
+	std::cout << arr1.toString() << std::endl;
+
+	jst::JSArray arr2;
+	arr2.pushBack(std::make_shared<jst::JSNumber>(45));
+	arr2.pushBack(std::make_shared<jst::JSNumber>(405));
+	arr2.pushBack(std::make_shared<jst::JSNumber>(45));
+	arr2.popBack();
+	std::cout << arr2.toString() << std::endl;
+
+	jst::JSArray arr3;
+	arr3.pushBack(std::make_shared<jst::JSArray>(arr2));
+	arr3.pushBack(std::make_shared<jst::JSArray>(arr3));
+	arr3.popBack();
+	std::cout << arr2.toString() << arr3.toString() << std::endl;
+
+
+
 
 	system("pause");
 	return 0;

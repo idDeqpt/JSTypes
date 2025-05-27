@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <memory>
 
 #include "JSBaseType.hpp"
 
@@ -17,15 +18,16 @@ namespace jst
 		~JSObject();
 
 		bool addField(std::string key);
+		bool addField(std::string key, std::shared_ptr<JSBaseType> value_ptr);
 		bool removeField(std::string key);
 
 		std::string toString() override;
 		void destroy() override;
 
-		JSBaseType*& operator[](std::string key);
+		std::shared_ptr<JSBaseType>& operator[](std::string key);
 
 	protected:
-		std::vector<std::pair<std::string, JSBaseType*>> fields;
+		std::vector<std::pair<std::string, std::shared_ptr<JSBaseType>>> fields;
 	};
 }
 

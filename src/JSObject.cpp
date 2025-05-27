@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include <string>
+#include <memory>
 
 
 jst::JSObject::JSObject()
@@ -23,7 +24,17 @@ bool jst::JSObject::addField(std::string key)
 		if (fields[i].first == key)
 			return false;
 
-	fields.push_back(std::make_pair(key, new JSBaseType()));
+	fields.push_back(std::make_pair(key, std::make_shared<JSBaseType>()));
+	return true;
+}
+
+bool jst::JSObject::addField(std::string key, std::shared_ptr<JSBaseType> value_ptr)
+{
+	for (unsigned int i = 0; i < fields.size(); i++)
+		if (fields[i].first == key) 
+			return false;
+
+	fields.push_back(std::make_pair(key, value_ptr));
 	return true;
 }
 
@@ -32,11 +43,8 @@ bool jst::JSObject::removeField(std::string key)
 	for (unsigned int i = 0; i < fields.size(); i++)
 		if (fields[i].first == key)
 		{
-			//if (fields[i].second != this)
-			//{
+			if (fields[i].second.get() != this)
 				fields[i].second->destroy();
-				delete fields[i].second;
-			//}
 			fields.erase(fields.begin() + i);
 			return true;
 		}
@@ -54,29 +62,25 @@ std::string jst::JSObject::toString()
 
 	std::string result = "{";
 	for (unsigned int i = 0; i < fields.size(); i++)
-		result += fields[i].first + ":" + ((fields[i].second == this) ? "undefined" : fields[i].second->toString()) + ",";
+		result += fields[i].first + ":" + ((fields[i].second.get() == this) ? "self" : fields[i].second->toString()) + ",";
 
-	result.pop_back();
+	if (fields.size() > 0)
+		result.pop_back();
 	result += "}";
 	return result;
 }
 
 void jst::JSObject::destroy()
 {
-	for (unsigned int i = 0; i < fields.size(); i++)
-	{
-		//if (fields[i].second == this)
-		//	continue;
-		fields[i].second->destroy();
-		delete fields[i].second;
-	}	
+	fields.clear();
+	undefined = true;
 }
 
 
-jst::JSBaseType*& jst::JSObject::operator[](std::string key)
+std::shared_ptr<jst::JSBaseType>& jst::JSObject::operator[](std::string key)
 {
 	for (unsigned int i = 0; i < fields.size(); i++)
 		if (key == fields[i].first)
 			return fields[i].second;
-	return fields[0].second;
+	return std::shared_ptr<JSBaseType>(nullptr);;
 }

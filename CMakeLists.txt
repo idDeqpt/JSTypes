@@ -9,7 +9,8 @@ set(SOURCE_LIB
 	src/JSBoolean.cpp
 	src/JSNumber.cpp 
 	src/JSString.cpp 
-	src/JSObject.cpp)       
+	src/JSObject.cpp 
+	src/JSArray.cpp)       
 
 # Включение экспорта всех символов для создания динамической библиотеки
 set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)

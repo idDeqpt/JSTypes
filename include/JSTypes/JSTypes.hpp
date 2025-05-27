@@ -5,5 +5,6 @@
 #include "JSNumber.hpp"
 #include "JSString.hpp"
 #include "JSObject.hpp"
+#include "JSArray.hpp"
 
 #endif //JS_TYPES_LIBRARY
