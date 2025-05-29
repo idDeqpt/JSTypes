@@ -6,5 +6,6 @@
 #include "JSString.hpp"
 #include "JSObject.hpp"
 #include "JSArray.hpp"
+#include "JSONParser.hpp"
 
 #endif //JS_TYPES_LIBRARY

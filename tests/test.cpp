@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include <JSTypes/JSTypes.hpp>
 
 
@@ -79,10 +81,46 @@ int main()
 	arr3.pushBack(std::make_shared<jst::JSArray>(arr2));
 	arr3.pushBack(std::make_shared<jst::JSArray>(arr3));
 	arr3.popBack();
-	std::cout << arr2.toString() << arr3.toString() << std::endl;
+	std::cout << arr2.toString() << arr3.toString() << std::endl << std::endl;
 
 
-
+	std::vector<std::string> json_strings = {
+		"",
+		"rpkegij",
+		"true",
+		"false",
+		"-",
+		"1",
+		"13",
+		"13.75   ",
+		"1a3.75   ",
+		"-13.75",
+		"-13.7.5",
+		"\"string ex\\\"ample\"",
+		"\"bad string example",
+		"[]",
+		"[42]",
+		"[true,23,\"string into array\"]",
+		"[true,23,\"bad string into array]",
+		"[true,23,\"bad string into bad array",
+		"[true,23,\"bad array example\"",
+		"[true,23,\"bad array example\", [13]",
+		"[true,23,\"bad array example\", [13, [true, 1]], false]",
+		"{}",
+		"{\"key1\": true, \"key2\": 13, \"key3\": \"string into object\"}",
+		"{\"key3\": \"string into object\", \"key1\": [false, 43]}",
+		"{\"key1\": true, \"key2\": 13, \"key3\": \"string into object\", [false, 43, {\"abc\": 32}]}",
+		"{\"key1\": true, \"key2\": 13, \"key3\": \"string into object\", \"big_key\": \n[false, 43, {\"abc\": 32}]}",
+	};
+	jst::JSON json;
+	for (unsigned int i = 0; i < json_strings.size(); i++)
+	{
+		std::cout << "Text: |" << json_strings[i] << "|" << std::endl;
+		if (json.parse(json_strings[i]))
+				std::cout << "Parse result: " << json.getParseResult()->toString() << std::endl << std::endl;
+		else
+				std::cout << "Error position: " << json.getErrorData().getPosition() << " Error type: " << json.getErrorData().getType() << std::endl << std::endl;
+	}
 
 	system("pause");
 	return 0;

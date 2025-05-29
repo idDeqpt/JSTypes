@@ -1,6 +1,5 @@
 #include "JSTypes/JSObject.hpp"
 
-#include <iostream>
 #include <utility>
 #include <string>
 #include <memory>
@@ -62,7 +61,7 @@ std::string jst::JSObject::toString()
 
 	std::string result = "{";
 	for (unsigned int i = 0; i < fields.size(); i++)
-		result += fields[i].first + ":" + ((fields[i].second.get() == this) ? "self" : fields[i].second->toString()) + ",";
+		result += "\"" + fields[i].first + "\":" + ((fields[i].second.get() == this) ? "undefined" : fields[i].second->toString()) + ",";
 
 	if (fields.size() > 0)
 		result.pop_back();
