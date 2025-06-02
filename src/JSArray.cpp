@@ -26,6 +26,11 @@ void jst::JSArray::popBack()
 	values.pop_back();
 }
 
+std::shared_ptr<jst::JSBaseType>& jst::JSArray::back()
+{
+	return values.back();
+}
+
 
 std::string jst::JSArray::toString()
 {
