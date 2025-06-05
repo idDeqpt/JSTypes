@@ -1,5 +1,5 @@
-#ifndef JSON_PARSER_HPP
-#define JSON_PARSER_HPP
+#ifndef JSON_PARSER_CLASS_HPP
+#define JSON_PARSER_CLASS_HPP
 
 #include <string>
 #include <memory>
@@ -41,4 +41,4 @@ namespace jst
 	};
 }
 
-#endif //JSON_PARSER_HPP
+#endif //JSON_PARSER_CLASS_HPP

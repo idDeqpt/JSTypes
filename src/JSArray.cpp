@@ -31,6 +31,11 @@ std::shared_ptr<jst::JSBaseType>& jst::JSArray::back()
 	return values.back();
 }
 
+unsigned int jst::JSArray::size()
+{
+	return values.size();
+}
+
 
 std::string jst::JSArray::toString()
 {

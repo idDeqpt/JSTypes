@@ -11,8 +11,8 @@ namespace jst
 	public:
 		JSBaseType() {undefined = true;}
 		bool undefined;
-		virtual std::string toString() {return "JSBaseType";};
-		virtual void destroy() {};
+		virtual std::string toString() {return "JSBaseType";}
+		virtual void destroy() {}
 	};
 }
 

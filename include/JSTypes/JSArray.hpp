@@ -19,6 +19,7 @@ namespace jst
 		void pushBack(std::shared_ptr<JSBaseType> new_value_ptr);
 		void popBack();
 		std::shared_ptr<JSBaseType>& back();
+		unsigned int size();
 
 		std::string toString() override;
 		void destroy() override;
