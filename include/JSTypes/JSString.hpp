@@ -14,6 +14,8 @@ namespace jst
 		JSString(float value);
 		JSString(std::string value);
 
+		std::string getString();
+
 		std::string toString() override;
 		void destroy() override {}
 
