@@ -57,11 +57,11 @@ std::string jst::JSObject::toString()
 		undefined = false;
 
 	if (undefined)
-		return "undefined";
+		return "null";
 
 	std::string result = "{";
 	for (unsigned int i = 0; i < fields.size(); i++)
-		result += "\"" + fields[i].first + "\":" + ((fields[i].second.get() == this) ? "undefined" : fields[i].second->toString()) + ",";
+		result += "\"" + fields[i].first + "\":" + ((fields[i].second.get() == this) ? "null" : fields[i].second->toString()) + ",";
 
 	if (fields.size() > 0)
 		result.pop_back();

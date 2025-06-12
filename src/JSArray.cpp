@@ -43,11 +43,11 @@ std::string jst::JSArray::toString()
 		undefined = false;
 
 	if (undefined)
-		return "undefined";
+		return "null";
 
 	std::string result = "[";
 	for (unsigned int i = 0; i < values.size(); i++)
-		result += ((values[i].get() == this) ? "self" : values[i]->toString()) + ",";
+		result += ((values[i].get() == this) ? "null" : values[i]->toString()) + ",";
 
 	if (values.size() > 0)
 		result.pop_back();

@@ -17,7 +17,7 @@ jst::JSBoolean::JSBoolean(bool value)
 
 std::string jst::JSBoolean::toString()
 {
-	return (undefined) ? "undefined" : (value ? "true" : "false");
+	return (undefined) ? "null" : (value ? "true" : "false");
 }
 
 

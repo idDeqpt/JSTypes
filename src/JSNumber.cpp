@@ -17,7 +17,7 @@ jst::JSNumber::JSNumber(float value)
 
 std::string jst::JSNumber::toString()
 {
-	return (undefined) ? "undefined" : std::to_string(value);
+	return (undefined) ? "null" : std::to_string(value);
 }
 
 

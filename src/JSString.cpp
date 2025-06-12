@@ -29,7 +29,7 @@ std::string jst::JSString::getString()
 
 std::string jst::JSString::toString()
 {
-	return (undefined) ? "undefined" : ("\"" + value + "\"");
+	return (undefined) ? "null" : ("\"" + value + "\"");
 }
 
 
