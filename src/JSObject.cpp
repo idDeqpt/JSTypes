@@ -5,6 +5,9 @@
 #include <memory>
 
 
+std::shared_ptr<jst::JSBaseType> jst::JSObject::null_element = std::shared_ptr<jst::JSBaseType>(nullptr);
+
+
 jst::JSObject::JSObject()
 {
 	undefined = true;
@@ -81,5 +84,5 @@ std::shared_ptr<jst::JSBaseType>& jst::JSObject::operator[](std::string key)
 	for (unsigned int i = 0; i < fields.size(); i++)
 		if (key == fields[i].first)
 			return fields[i].second;
-	return std::shared_ptr<JSBaseType>(nullptr);;
+	return null_element;
 }

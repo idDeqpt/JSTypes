@@ -28,6 +28,7 @@ namespace jst
 
 	protected:
 		std::vector<std::pair<std::string, std::shared_ptr<JSBaseType>>> fields;
+		static std::shared_ptr<JSBaseType> null_element;
 	};
 }
 
