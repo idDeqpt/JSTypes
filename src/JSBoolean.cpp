@@ -1,33 +1,32 @@
-#include "JSTypes/JSBoolean.hpp"
+#include <JSTypes/JSBoolean.hpp>
 
 #include <string>
 
-
-jst::JSBoolean::JSBoolean()
+namespace jst
 {
-	undefined = true;
-}
 
-jst::JSBoolean::JSBoolean(bool value)
+JSBoolean::JSBoolean(bool value):
+	m_value(value)
 {
-	undefined = false;
-	this->value = value;
+	m_undefined = false;
 }
 
 
-std::string jst::JSBoolean::toString()
+std::string JSBoolean::toString() const
 {
-	return (undefined) ? "null" : (value ? "true" : "false");
+	return (m_undefined) ? "null" : (m_value ? "true" : "false");
 }
 
 
-void jst::JSBoolean::operator=(bool new_value)
+void JSBoolean::operator=(bool new_value)
 {
-	undefined = false;
-	value = new_value;
+	m_undefined = false;
+	m_value = new_value;
 }
 
-jst::JSBoolean::operator bool() const
+JSBoolean::operator bool() const
 {
-	return value;
+	return m_value;
 }
+
+} //namespace jst

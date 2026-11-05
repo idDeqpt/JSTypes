@@ -1,40 +1,40 @@
-#include "JSTypes/JSString.hpp"
+#include <JSTypes/JSString.hpp>
 
 #include <string>
 
 
-jst::JSString::JSString()
+namespace jst
 {
-	undefined = true;
+
+JSString::JSString(float value):
+	m_value(std::to_string(value))
+{
+	m_undefined = false;
 }
 
-jst::JSString::JSString(float value)
+JSString::JSString(std::string value):
+	m_value(value)
 {
-	undefined = false;
-	this->value = std::to_string(value);
-}
-
-jst::JSString::JSString(std::string value)
-{
-	undefined = false;
-	this->value = value;
-}
-
-
-std::string jst::JSString::getString()
-{
-	return value;
+	m_undefined = false;
 }
 
 
-std::string jst::JSString::toString()
+const std::string& JSString::getString() const
 {
-	return (undefined) ? "null" : ("\"" + value + "\"");
+	return m_value;
 }
 
 
-void jst::JSString::operator=(std::string new_value)
+std::string JSString::toString() const
 {
-	undefined = false;
-	value = new_value;
+	return (m_undefined) ? "null" : ("\"" + m_value + "\"");
 }
+
+
+void JSString::operator=(const std::string& new_value)
+{
+	m_undefined = false;
+	m_value = new_value;
+}
+
+} //namespace jst

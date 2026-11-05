@@ -41,7 +41,7 @@ int main()
 	std::cout << obj.toString() << std::endl;
 
 	jst::JSObject obj1;
-	obj1.addField("key1", std::make_shared<jst::JSBaseType>());
+	obj1.addField("key1");
 	obj1.addField("key2", std::make_shared<jst::JSBoolean>(true));
 	obj1.addField("key3", std::make_shared<jst::JSNumber>(34));
 	obj1.addField("key4", std::make_shared<jst::JSString>("abbebe"));
@@ -64,7 +64,7 @@ int main()
 	std::cout << arr.toString() << std::endl;
 
 	jst::JSArray arr1;
-	arr1.pushBack(std::make_shared<jst::JSBaseType>());
+	arr1.pushBack(std::make_shared<jst::JSUndefined>());
 	arr1.pushBack(std::make_shared<jst::JSNumber>());
 	arr1.pushBack(std::make_shared<jst::JSNumber>(45));
 	arr1.pushBack(std::make_shared<jst::JSObject>(obj1));

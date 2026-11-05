@@ -6,29 +6,28 @@
 #include <string>
 #include <memory>
 
-#include "JSBaseType.hpp"
-
+#include <JSTypes/JSBaseType.hpp>
 
 namespace jst
 {
 	class JSObject : public JSBaseType
 	{
 	public:
-		JSObject();
+		JSObject() = default;
 		~JSObject();
 
 		bool addField(std::string key);
 		bool addField(std::string key, std::shared_ptr<JSBaseType> value_ptr);
 		bool removeField(std::string key);
 
-		std::string toString() override;
+		std::string toString() const override;
 		void destroy() override;
 
-		std::shared_ptr<JSBaseType>& operator[](std::string key);
+		std::shared_ptr<JSBaseType>& operator[](const std::string& key);
 
 	protected:
-		std::vector<std::pair<std::string, std::shared_ptr<JSBaseType>>> fields;
-		static std::shared_ptr<JSBaseType> null_element;
+		std::vector<std::pair<std::string, std::shared_ptr<JSBaseType>>> m_fields;
+		static std::shared_ptr<JSBaseType> s_null_element;
 	};
 }
 

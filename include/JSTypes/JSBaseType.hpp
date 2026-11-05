@@ -3,16 +3,21 @@
 
 #include <string>
 
-
 namespace jst
 {
 	class JSBaseType
 	{
 	public:
-		JSBaseType() {undefined = true;}
-		bool undefined;
-		virtual std::string toString() {return "JSBaseType";}
-		virtual void destroy() {}
+		JSBaseType() = default;
+		virtual ~JSBaseType() = default;
+
+		virtual std::string toString() const = 0;
+		virtual void destroy() {m_undefined = true;}
+
+		bool isUndefined() const {return m_undefined;}
+
+	protected:
+		bool m_undefined = true;
 	};
 }
 

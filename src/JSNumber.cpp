@@ -1,33 +1,32 @@
-#include "JSTypes/JSNumber.hpp"
+#include <JSTypes/JSNumber.hpp>
 
 #include <string>
 
-
-jst::JSNumber::JSNumber()
+namespace jst
 {
-	undefined = true;
-}
 
-jst::JSNumber::JSNumber(float value)
+JSNumber::JSNumber(float value):
+	m_value(value)
 {
-	undefined = false;
-	this->value = value;
+	m_undefined = false;
 }
 
 
-std::string jst::JSNumber::toString()
+std::string JSNumber::toString() const
 {
-	return (undefined) ? "null" : std::to_string(value);
+	return (m_undefined) ? "null" : std::to_string(m_value);
 }
 
 
-void jst::JSNumber::operator=(float new_value)
+void JSNumber::operator=(float new_value)
 {
-	undefined = false;
-	value = new_value;
+	m_undefined = false;
+	m_value = new_value;
 }
 
-jst::JSNumber::operator float() const
+JSNumber::operator float() const
 {
-	return value;
+	return m_value;
 }
+
+} //namespace jst

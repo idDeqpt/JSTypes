@@ -1,25 +1,23 @@
 #ifndef JS_BOOLEAN_TYPE_HPP
 #define JS_BOOLEAN_TYPE_HPP
 
-#include "JSBaseType.hpp"
-
+#include <JSTypes/JSBaseType.hpp>
 
 namespace jst
 {
 	class JSBoolean : public JSBaseType
 	{
 	public:
-		JSBoolean();
+		JSBoolean() = default;
 		JSBoolean(bool value);
 
-		std::string toString() override;
-		void destroy() override {}
+		std::string toString() const override;
 
 		void operator=(bool new_value);
 		operator bool() const;
 
 	protected:
-		bool value;
+		bool m_value = 0;
 	};
 }
 

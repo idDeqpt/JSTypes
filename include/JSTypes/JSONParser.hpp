@@ -4,9 +4,8 @@
 #include <string>
 #include <memory>
 
-#include "JSBaseType.hpp"
-#include "JSONParseError.hpp"
-
+#include <JSTypes/JSBaseType.hpp>
+#include <JSTypes/JSONParseError.hpp>
 
 namespace jst
 {
@@ -15,13 +14,13 @@ namespace jst
 	public:
 		JSON();
 
-		bool parse(std::string& json);
+		bool parse(const std::string& json);
 
 		std::shared_ptr<JSBaseType> getParseResult();
-		JSONParseError getErrorData();
+		JSONParseError getErrorData() const;
 
 	protected:
-		std::string* json_ptr;
+		const std::string* json_ptr;
 		int cur_pos;
 		bool string_over;
 		JSONParseError last_error;
@@ -33,11 +32,12 @@ namespace jst
 
 		std::shared_ptr<JSBaseType> parse_process();
 
-		std::shared_ptr<JSBaseType> parse_bool();
-		std::shared_ptr<JSBaseType> parse_number();
-		std::string parse_string();
-		std::shared_ptr<JSBaseType> parse_array();
-		std::shared_ptr<JSBaseType> parse_object();
+		std::shared_ptr<JSBaseType> try_parse_null();
+		std::shared_ptr<JSBaseType> try_parse_bool();
+		std::shared_ptr<JSBaseType> try_parse_number();
+		std::shared_ptr<JSBaseType> try_parse_string();
+		std::shared_ptr<JSBaseType> try_parse_array();
+		std::shared_ptr<JSBaseType> try_parse_object();
 	};
 }
 

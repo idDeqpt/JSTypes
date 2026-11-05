@@ -1,68 +1,65 @@
-#include "JSTypes/JSArray.hpp"
+#include <JSTypes/JSArray.hpp>
 
 #include <vector>
 #include <string>
 
-
-jst::JSArray::JSArray()
+namespace jst
 {
-	undefined = true;
-	values.clear();
-}
 
-jst::JSArray::~JSArray()
+JSArray::~JSArray()
 {
 	destroy();
 }
 
 
-void jst::JSArray::pushBack(std::shared_ptr<JSBaseType> new_value_ptr)
+void JSArray::pushBack(std::shared_ptr<JSBaseType> new_value_ptr)
 {
-	values.push_back(new_value_ptr);
+	m_undefined = false;
+	m_values.push_back(new_value_ptr);
 }
 
-void jst::JSArray::popBack()
+void JSArray::popBack()
 {
-	values.pop_back();
-}
-
-std::shared_ptr<jst::JSBaseType>& jst::JSArray::back()
-{
-	return values.back();
-}
-
-unsigned int jst::JSArray::size()
-{
-	return values.size();
+	m_values.pop_back();
 }
 
 
-std::string jst::JSArray::toString()
+std::shared_ptr<JSBaseType>& JSArray::back()
 {
-	if (values.size() > 0)
-		undefined = false;
+	return m_values.back();
+}
 
-	if (undefined)
+unsigned int JSArray::size() const
+{
+	return m_values.size();
+}
+
+
+std::string JSArray::toString() const
+{
+	if (m_undefined)
 		return "null";
 
 	std::string result = "[";
-	for (unsigned int i = 0; i < values.size(); i++)
-		result += ((values[i].get() == this) ? "null" : values[i]->toString()) + ",";
+	for (unsigned int i = 0; i < m_values.size(); i++)
+		result += ((m_values[i].get() == this) ? "null" : m_values[i]->toString()) + ",";
 
-	if (values.size() > 0)
+	if (m_values.size() > 0)
 		result.pop_back();
 	result += "]";
 	return result;
 }
 
-void jst::JSArray::destroy()
+void JSArray::destroy()
 {
-	values.clear();
-	undefined = true;
+	m_values.clear();
+	m_undefined = true;
 }
 
 
-std::shared_ptr<jst::JSBaseType>& jst::JSArray::operator[](unsigned int index)
+std::shared_ptr<JSBaseType>& JSArray::operator[](unsigned int index)
 {
-	return values[index];
+	return m_values[index];
 }
+
+} //namespace jst

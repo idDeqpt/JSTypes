@@ -1,11 +1,12 @@
 #ifndef JS_TYPES_LIBRARY
 #define JS_TYPES_LIBRARY
 
-#include "JSONParser.hpp"
-#include "JSBoolean.hpp"
-#include "JSNumber.hpp"
-#include "JSString.hpp"
-#include "JSObject.hpp"
-#include "JSArray.hpp"
+#include <JSTypes/JSONParser.hpp>
+#include <JSTypes/JSBoolean.hpp>
+#include <JSTypes/JSNumber.hpp>
+#include <JSTypes/JSString.hpp>
+#include <JSTypes/JSObject.hpp>
+#include <JSTypes/JSArray.hpp>
+#include <JSTypes/JSUndefined.hpp>
 
 #endif //JS_TYPES_LIBRARY

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.14)
 
 set(PROJECT_NAME JSTypes)
 
@@ -7,21 +7,17 @@ project(${PROJECT_NAME}
 	LANGUAGES CXX
 )
 
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+		Debug Release RelWithDebInfo MinSizeRel)
+endif()
 
-option(BUILD_SHARED_LIBS "Build shared library" ON)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>)
 
-set(PUBLIC_HEADER
-	include/JSTypes/JSArray.hpp
-	include/JSTypes/JSBaseType.hpp
-	include/JSTypes/JSBoolean.hpp
-	include/JSTypes/JSNumber.hpp
-	include/JSTypes/JSObject.hpp
-	include/JSTypes/JSONParseError.hpp
-	include/JSTypes/JSONParser.hpp
-	include/JSTypes/JSString.hpp
-	include/JSTypes/JSTypes.hpp)
+option(BUILD_SHARED "Build shared library" OFF)
+option(BUILD_TESTS "Build tests" OFF)
 
 set(SOURCE_FILES
 	src/JSArray.cpp
@@ -32,12 +28,17 @@ set(SOURCE_FILES
 	src/JSONParser.cpp
 	src/JSString.cpp)
 
-if (BUILD_SHARED_LIBS)
+if(BUILD_SHARED)
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-	add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+	add_library(${PROJECT_NAME} SHARED)
 else()
-	add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
+	add_library(${PROJECT_NAME} STATIC)
 endif()
+
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+target_sources(${PROJECT_NAME} PRIVATE
+	${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC 
@@ -46,54 +47,46 @@ target_include_directories(${PROJECT_NAME}
 )
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-	VERSION ${PROJECT_VERSION}
-	SOVERSION ${PROJECT_VERSION_MAJOR}
-	EXPORT_NAME ${PROJECT_NAME}
-)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(TARGETS ${PROJECT_NAME}
+	EXPORT ${PROJECT_NAME}Targets
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development)
+
+install(DIRECTORY include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	COMPONENT development)
+
+install(DIRECTORY cmake/modules/
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/modules
+	COMPONENT development)
+
+install(EXPORT ${PROJECT_NAME}Targets
+	NAMESPACE {PROJECT_NAME}::
+	FILE ${PROJECT_NAME}Targets.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+	COMPONENT development)
 
 configure_package_config_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
+	INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 write_basic_package_version_file(
 	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
 	VERSION ${PROJECT_VERSION}
-	COMPATIBILITY SameMajorVersion
-)
+	COMPATIBILITY SameMajorVersion)
 
-install(
-	TARGETS ${PROJECT_NAME}
-	EXPORT ${PROJECT_NAME}Targets
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-	INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-install(
-	DIRECTORY include/${PROJECT_NAME}
-	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-install(
-	EXPORT ${PROJECT_NAME}Targets
-	FILE ${PROJECT_NAME}Targets.cmake
-	NAMESPACE ${PROJECT_NAME}::
+install(FILES
+	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+	"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
+	COMPONENT development)
 
-install(
-	FILES
-		"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-		"${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
-
-export(
-	EXPORT ${PROJECT_NAME}Targets
-	FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake"
-	NAMESPACE ${PROJECT_NAME}::
-)
+if(BUILD_TESTS)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/tests)
+	add_subdirectory(tests)
+endif()

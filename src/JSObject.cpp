@@ -1,88 +1,87 @@
-#include "JSTypes/JSObject.hpp"
+#include <JSTypes/JSObject.hpp>
+
+#include <JSTypes/JSUndefined.hpp>
 
 #include <utility>
 #include <string>
 #include <memory>
 
-
-std::shared_ptr<jst::JSBaseType> jst::JSObject::null_element = std::shared_ptr<jst::JSBaseType>(nullptr);
-
-
-jst::JSObject::JSObject()
+namespace jst
 {
-	undefined = true;
-	fields.clear();
-}
 
-jst::JSObject::~JSObject()
+std::shared_ptr<JSBaseType> JSObject::s_null_element = std::shared_ptr<JSBaseType>(nullptr);
+
+
+JSObject::~JSObject()
 {
 	destroy();
 }
 
 
-bool jst::JSObject::addField(std::string key)
+bool JSObject::addField(std::string key)
 {
-	for (unsigned int i = 0; i < fields.size(); i++)
-		if (fields[i].first == key)
+	m_undefined = false;
+	for (unsigned int i = 0; i < m_fields.size(); i++)
+		if (m_fields[i].first == key)
 			return false;
 
-	fields.push_back(std::make_pair(key, std::make_shared<JSBaseType>()));
+	m_fields.push_back(std::make_pair(key, std::make_shared<JSUndefined>()));
 	return true;
 }
 
-bool jst::JSObject::addField(std::string key, std::shared_ptr<JSBaseType> value_ptr)
+bool JSObject::addField(std::string key, std::shared_ptr<JSBaseType> value_ptr)
 {
-	for (unsigned int i = 0; i < fields.size(); i++)
-		if (fields[i].first == key) 
+	m_undefined = false;
+	for (unsigned int i = 0; i < m_fields.size(); i++)
+		if (m_fields[i].first == key) 
 			return false;
 
-	fields.push_back(std::make_pair(key, value_ptr));
+	m_fields.push_back(std::make_pair(key, value_ptr));
 	return true;
 }
 
-bool jst::JSObject::removeField(std::string key)
+bool JSObject::removeField(std::string key)
 {
-	for (unsigned int i = 0; i < fields.size(); i++)
-		if (fields[i].first == key)
+	for (unsigned int i = 0; i < m_fields.size(); i++)
+		if (m_fields[i].first == key)
 		{
-			if (fields[i].second.get() != this)
-				fields[i].second->destroy();
-			fields.erase(fields.begin() + i);
+			if (m_fields[i].second.get() != this)
+				m_fields[i].second->destroy();
+			m_fields.erase(m_fields.begin() + i);
 			return true;
 		}
 	return false;
 }
 
 
-std::string jst::JSObject::toString()
+std::string JSObject::toString() const
 {
-	if (fields.size() > 0)
-		undefined = false;
-
-	if (undefined)
+	if (m_undefined)
 		return "null";
 
 	std::string result = "{";
-	for (unsigned int i = 0; i < fields.size(); i++)
-		result += "\"" + fields[i].first + "\":" + ((fields[i].second.get() == this) ? "null" : fields[i].second->toString()) + ",";
+	for (unsigned int i = 0; i < m_fields.size(); i++)
+		result += "\"" + m_fields[i].first + "\":" + ((m_fields[i].second.get() == this) ? "null" : m_fields[i].second->toString()) + ",";
 
-	if (fields.size() > 0)
+	if (m_fields.size() > 0)
 		result.pop_back();
 	result += "}";
 	return result;
 }
 
-void jst::JSObject::destroy()
+void JSObject::destroy()
 {
-	fields.clear();
-	undefined = true;
+	m_fields.clear();
+	m_undefined = true;
 }
 
 
-std::shared_ptr<jst::JSBaseType>& jst::JSObject::operator[](std::string key)
+std::shared_ptr<JSBaseType>& JSObject::operator[](const std::string& key)
 {
-	for (unsigned int i = 0; i < fields.size(); i++)
-		if (key == fields[i].first)
-			return fields[i].second;
-	return null_element;
+	for (unsigned int i = 0; i < m_fields.size(); i++)
+		if (key == m_fields[i].first)
+			return m_fields[i].second;
+	return s_null_element;
 }
+
+} //namespace jst

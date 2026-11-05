@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 
-#include "JSBaseType.hpp"
+#include <JSTypes/JSBaseType.hpp>
 
 
 namespace jst
@@ -13,21 +13,22 @@ namespace jst
 	class JSArray : public JSBaseType
 	{
 	public:
-		JSArray();
+		JSArray() = default;
 		~JSArray();
 
 		void pushBack(std::shared_ptr<JSBaseType> new_value_ptr);
 		void popBack();
-		std::shared_ptr<JSBaseType>& back();
-		unsigned int size();
 
-		std::string toString() override;
+		std::shared_ptr<JSBaseType>& back();
+		unsigned int size() const;
+
+		std::string toString() const override;
 		void destroy() override;
 
 		std::shared_ptr<JSBaseType>&  operator[](unsigned int index);
 
 	protected:
-		std::vector<std::shared_ptr<JSBaseType>> values;
+		std::vector<std::shared_ptr<JSBaseType>> m_values;
 	};
 }
 

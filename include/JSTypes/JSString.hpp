@@ -1,28 +1,26 @@
 #ifndef JS_STRING_TYPE_HPP
 #define JS_STRING_TYPE_HPP
 
+#include <JSTypes/JSBaseType.hpp>
 #include <string>
-#include "JSBaseType.hpp"
-
 
 namespace jst
 {
 	class JSString : public JSBaseType
 	{
 	public:
-		JSString();
+		JSString() = default;
 		JSString(float value);
 		JSString(std::string value);
 
-		std::string getString();
+		const std::string& getString() const;
 
-		std::string toString() override;
-		void destroy() override {}
+		std::string toString() const override;
 
-		void operator=(std::string new_value);
+		void operator=(const std::string& new_value);
 
 	protected:
-		std::string value;
+		std::string m_value = "";
 	};
 }
 

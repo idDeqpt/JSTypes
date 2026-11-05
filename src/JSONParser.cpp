@@ -1,22 +1,24 @@
-#include "JSTypes/JSONParser.hpp"
+#include <JSTypes/JSONParser.hpp>
 
-#include "JSTypes/JSTypes.hpp"
-#include "JSTypes/JSONParseError.hpp"
+#include <JSTypes/JSTypes.hpp>
+#include <JSTypes/JSONParseError.hpp>
 
 #include <string>
 #include <memory>
 
+namespace jst
+{
 
 jst::JSON::JSON()
 {
 	string_over = false;
 	cur_pos = 0;
-	parse_result = std::make_shared<JSBaseType>();
+	parse_result = std::make_shared<JSUndefined>();
 	last_error = JSONParseError();
 }
 
 
-bool jst::JSON::parse(std::string& json)
+bool jst::JSON::parse(const std::string& json)
 {
 	if (json.size() == 0)
 	{
@@ -38,7 +40,7 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::getParseResult()
 	return parse_result;
 }
 
-jst::JSONParseError jst::JSON::getErrorData()
+jst::JSONParseError jst::JSON::getErrorData() const
 {
 	return last_error;
 }
@@ -76,35 +78,50 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::parse_process()
 	skip_whitespaces();
 
 	// if number
-	if ((json_ptr->at(cur_pos) == '-') || ((json_ptr->at(cur_pos) > 47) && (json_ptr->at(cur_pos) < 58)))
-		return parse_number();
+	if (auto res = try_parse_number(); res != nullptr)
+		return res;
 
 	// if string
-	if (json_ptr->at(cur_pos) == '"')
-		return std::make_shared<JSString>(parse_string());
+	if (auto res = try_parse_string(); res != nullptr)
+		return res;
 
 	// if array
-	if (json_ptr->at(cur_pos) == '[')
-		return parse_array();
+	if (auto res = try_parse_array(); res != nullptr)
+		return res;
 
 	// if object
-	if (json_ptr->at(cur_pos) == '{')
-		return parse_object();
+	if (auto res = try_parse_object(); res != nullptr)
+		return res;
 
 	// if bool
-	std::shared_ptr<JSBaseType> v = parse_bool();
-	if (v != nullptr)
-		return v;
+	if (auto res = try_parse_bool(); res != nullptr)
+		return res;
+
+	// if null
+	if (auto res = try_parse_null(); res != nullptr)
+		return res;
 
 	if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 		last_error = JSONParseError(cur_pos, JSONParseError::ErrorType::UNEXPECTED_CHARACTER);
 
-	return std::shared_ptr<JSBaseType>();
+	return std::shared_ptr<JSBaseType>(nullptr);
 }
 
 
-std::shared_ptr<jst::JSBaseType> jst::JSON::parse_bool()
+std::shared_ptr<jst::JSBaseType> jst::JSON::try_parse_null()
 {
+    skip_whitespaces();
+    if (json_ptr->substr(cur_pos, 4) == "null")
+    {
+        peek();peek();peek();peek();
+        return std::make_shared<JSUndefined>();
+    }
+    return std::shared_ptr<JSBaseType>(nullptr);
+}
+
+std::shared_ptr<jst::JSBaseType> jst::JSON::try_parse_bool()
+{
+	skip_whitespaces();
 	if (json_ptr->substr(cur_pos, 4) == "true")
 	{
 		peek();peek();peek();peek();
@@ -115,12 +132,15 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::parse_bool()
 		peek();peek();peek();peek();peek();
 		return std::make_shared<JSBoolean>(false);
 	}
-
-	return std::shared_ptr<JSBaseType>();
+	return std::shared_ptr<JSBaseType>(nullptr);
 }
 
-std::shared_ptr<jst::JSBaseType> jst::JSON::parse_number()
+std::shared_ptr<jst::JSBaseType> jst::JSON::try_parse_number()
 {
+	skip_whitespaces();
+	if ((json_ptr->at(cur_pos) != '-') && !((json_ptr->at(cur_pos) > 47) && (json_ptr->at(cur_pos) < 58)))
+		return std::shared_ptr<JSBaseType>(nullptr);
+
 	int start_pos = cur_pos;
 	peek();
 
@@ -140,11 +160,15 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::parse_number()
 
 	if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 		last_error = JSONParseError(start_pos, JSONParseError::ErrorType::INCORRECT_NUMBER);
-	return std::shared_ptr<JSBaseType>();
+	return std::shared_ptr<JSBaseType>(nullptr);
 }
 
-std::string jst::JSON::parse_string()
+std::shared_ptr<jst::JSBaseType> jst::JSON::try_parse_string()
 {
+	skip_whitespaces();
+	if (json_ptr->at(cur_pos) != '"')
+		return std::shared_ptr<JSBaseType>(nullptr);
+
 	skip_whitespaces();
 	peek();
 
@@ -155,7 +179,7 @@ std::string jst::JSON::parse_string()
 		{
 			if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 				last_error = JSONParseError(start_pos - 1, JSONParseError::ErrorType::EXPECTED_CLOSING_BRACKET);
-			return "";
+			return std::shared_ptr<JSBaseType>(nullptr);
 		}
 
 		if (json_ptr->at(cur_pos) == '\\')
@@ -163,15 +187,25 @@ std::string jst::JSON::parse_string()
 		peek();
 	}
 	peek();
-	return json_ptr->substr(start_pos, ((string_over) ? cur_pos : cur_pos - 1) - start_pos);
+	return std::make_shared<JSString>(json_ptr->substr(start_pos, ((string_over) ? cur_pos : cur_pos - 1) - start_pos));
 }
 
-std::shared_ptr<jst::JSBaseType> jst::JSON::parse_array()
+std::shared_ptr<jst::JSBaseType> jst::JSON::try_parse_array()
 {
+	skip_whitespaces();
+	if (json_ptr->at(cur_pos) != '[')
+		return std::shared_ptr<JSBaseType>(nullptr);
+
 	int start_pos = cur_pos;
 	JSArray result;
 	peek();
 	skip_whitespaces();
+
+	if (json_ptr->at(cur_pos) == ']')
+	{
+		peek();
+		return std::make_shared<JSArray>(result);
+	}
 
 	int brackets_counter;
 	for (brackets_counter = 1; !string_over && (brackets_counter != 0); )
@@ -183,6 +217,8 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::parse_array()
 			if (string_over)
 				break;
 		}
+
+		skip_whitespaces();
 
 		if (json_ptr->at(cur_pos) == ']')
 		{
@@ -197,39 +233,51 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::parse_array()
 	{
 		if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 			last_error = JSONParseError(start_pos, JSONParseError::ErrorType::EXPECTED_CLOSING_BRACKET);
-		return std::shared_ptr<JSBaseType>();
+		return std::shared_ptr<JSBaseType>(nullptr);
 	}
 	return std::make_shared<JSArray>(result);
 }
 
-std::shared_ptr<jst::JSBaseType> jst::JSON::parse_object()
+std::shared_ptr<jst::JSBaseType> jst::JSON::try_parse_object()
 {
+	skip_whitespaces();
+	if (json_ptr->at(cur_pos) != '{')
+		return std::shared_ptr<JSBaseType>(nullptr);
+
 	int start_pos = cur_pos;
 	JSObject result;
 	peek();
 	skip_whitespaces();
 
+	if (json_ptr->at(cur_pos) == '}')
+	{
+		peek();
+		return std::make_shared<JSObject>(result);
+	}
+
 	int brackets_counter;
 	for (brackets_counter = 1; !string_over && (brackets_counter != 0); )
 	{
-		std::string key_name = parse_string();
-		if (key_name == "")
+		auto key_name = try_parse_string();
+		if ((key_name == nullptr) || (static_cast<JSString*>(key_name.get())->getString() == ""))
 		{
 			if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 				last_error = JSONParseError(cur_pos, JSONParseError::ErrorType::INCORRECT_OBJECT_KEY_NAME);
-			return std::shared_ptr<JSBaseType>();
+			return std::shared_ptr<JSBaseType>(nullptr);
 		}
 		peek();
 
 		std::shared_ptr<JSBaseType> el = parse_process();
 		if (el != nullptr)
-			result.addField(key_name, el);
+			result.addField(static_cast<JSString*>(key_name.get())->getString(), el);
 		else
 		{
 			if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 				last_error = JSONParseError(cur_pos, JSONParseError::ErrorType::UNEXPECTED_CHARACTER);
-			return std::shared_ptr<JSBaseType>();
+			return std::shared_ptr<JSBaseType>(nullptr);
 		}
+
+		skip_whitespaces();
 
 		if (json_ptr->at(cur_pos) == '}')
 		{
@@ -244,7 +292,9 @@ std::shared_ptr<jst::JSBaseType> jst::JSON::parse_object()
 	{
 		if (last_error.getType() == JSONParseError::ErrorType::NO_ERROR)
 			last_error = JSONParseError(start_pos, JSONParseError::ErrorType::EXPECTED_CLOSING_BRACKET);
-		return std::shared_ptr<JSBaseType>();
+		return std::shared_ptr<JSBaseType>(nullptr);
 	}
 	return std::make_shared<JSObject>(result);
 }
+
+} //namespace jst
