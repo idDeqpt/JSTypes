@@ -3,23 +3,29 @@
 
 jst::JSONParseError::JSONParseError()
 {
-	position = -1;
-	type = ErrorType::NO_ERROR;
+	m_position = -1;
+	m_type = ErrorType::NO_ERROR;
 }
 
 jst::JSONParseError::JSONParseError(int position, ErrorType type)
 {
-	this->position = position;
-	this->type = type;
+	m_position = position;
+	m_type = type;
 }
 
 
-int jst::JSONParseError::getPosition()
+int jst::JSONParseError::getPosition() const
 {
-	return position;
+	return m_position;
 }
 
-jst::JSONParseError::ErrorType jst::JSONParseError::getType()
+jst::JSONParseError::ErrorType jst::JSONParseError::getType() const
 {
-	return type;
+	return m_type;
+}
+
+
+bool jst::JSONParseError::operator==(const JSONParseError& other) const
+{
+	return ((m_type == other.m_type) && (m_position == other.m_position));
 }

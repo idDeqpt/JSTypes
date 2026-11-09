@@ -19,12 +19,14 @@ namespace jst
 		JSONParseError();
 		JSONParseError(int position, ErrorType error_type);
 
-		int getPosition();
-		ErrorType getType();
+		int getPosition() const;
+		ErrorType getType() const;
+
+		bool operator==(const JSONParseError& other) const;
 
 	protected:
-		int position;
-		ErrorType type;
+		int m_position;
+		ErrorType m_type;
 	};
 }
 
